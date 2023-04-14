@@ -1,0 +1,1 @@
+7693f368743f6cb7fe93ab748bfab92e8afe33fb691a4cda0d15415c0402a404  ./target/wasm32-unknown-unknown/release/limit_order_bot_univ2_cw.wasm
