@@ -9,6 +9,9 @@ pub enum ContractError {
     #[error("Unauthorized")]
     Unauthorized {},
 
+    #[error("Invalid Parameters")]
+    InvalidParameters {},
+
     #[error("AllPending")]
     AllPending {},
     // Add any other custom errors you like here.
