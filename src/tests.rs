@@ -28,6 +28,7 @@ fn happy_path() -> Result<(), ContractError> {
         info.clone(),
         ExecuteMsg::PutWithdraw {
             deposit_ids: vec![0u32, 1u32, 2u32],
+            profit_taking_or_stop_loss: vec![true, false, true],
         },
     )?;
 
@@ -38,6 +39,7 @@ fn happy_path() -> Result<(), ContractError> {
         info.clone(),
         ExecuteMsg::PutWithdraw {
             deposit_ids: vec![0u32, 1u32, 2u32],
+            profit_taking_or_stop_loss: vec![true, false, true],
         },
     )
     .is_err();
@@ -51,6 +53,7 @@ fn happy_path() -> Result<(), ContractError> {
         info.clone(),
         ExecuteMsg::PutWithdraw {
             deposit_ids: vec![0u32, 1u32, 2u32],
+            profit_taking_or_stop_loss: vec![true, false, true],
         },
     )?;
     assert_eq!(r.messages.len(), 1);
