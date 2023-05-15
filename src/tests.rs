@@ -1,7 +1,7 @@
 //! Smoke tests.
 
 use crate::contract::{execute, instantiate};
-use crate::msg::{ExecuteMsg, InstantiateMsg};
+use crate::msg::{Deposit, ExecuteMsg, InstantiateMsg};
 use crate::ContractError;
 use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
 
@@ -27,7 +27,20 @@ fn happy_path() -> Result<(), ContractError> {
         env.clone(),
         info.clone(),
         ExecuteMsg::PutWithdraw {
-            deposit_ids: vec![0u32, 1u32, 2u32],
+            deposits: vec![
+                Deposit {
+                    deposit_id: 0u32,
+                    profit_taking_or_stop_loss: true,
+                },
+                Deposit {
+                    deposit_id: 1u32,
+                    profit_taking_or_stop_loss: false,
+                },
+                Deposit {
+                    deposit_id: 2u32,
+                    profit_taking_or_stop_loss: true,
+                },
+            ],
         },
     )?;
 
@@ -37,7 +50,20 @@ fn happy_path() -> Result<(), ContractError> {
         env.clone(),
         info.clone(),
         ExecuteMsg::PutWithdraw {
-            deposit_ids: vec![0u32, 1u32, 2u32],
+            deposits: vec![
+                Deposit {
+                    deposit_id: 0u32,
+                    profit_taking_or_stop_loss: true,
+                },
+                Deposit {
+                    deposit_id: 1u32,
+                    profit_taking_or_stop_loss: false,
+                },
+                Deposit {
+                    deposit_id: 2u32,
+                    profit_taking_or_stop_loss: true,
+                },
+            ],
         },
     )
     .is_err();
@@ -50,7 +76,20 @@ fn happy_path() -> Result<(), ContractError> {
         env,
         info.clone(),
         ExecuteMsg::PutWithdraw {
-            deposit_ids: vec![0u32, 1u32, 2u32],
+            deposits: vec![
+                Deposit {
+                    deposit_id: 0u32,
+                    profit_taking_or_stop_loss: true,
+                },
+                Deposit {
+                    deposit_id: 1u32,
+                    profit_taking_or_stop_loss: false,
+                },
+                Deposit {
+                    deposit_id: 2u32,
+                    profit_taking_or_stop_loss: true,
+                },
+            ],
         },
     )?;
     assert_eq!(r.messages.len(), 1);
