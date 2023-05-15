@@ -9,10 +9,13 @@ pub struct InstantiateMsg {
 
 #[cw_serde]
 pub enum ExecuteMsg {
-    PutWithdraw {
-        deposit_ids: Vec<u32>,
-        profit_taking_or_stop_loss: Vec<bool>,
-    },
+    PutWithdraw { deposits: Vec<Deposit> },
+}
+
+#[cw_serde]
+pub struct Deposit {
+    pub deposit_id: u32,
+    pub profit_taking_or_stop_loss: bool,
 }
 
 /// Message struct for cross-chain calls.

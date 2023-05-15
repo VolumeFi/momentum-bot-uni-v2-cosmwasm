@@ -4,7 +4,7 @@ use cosmwasm_std::{to_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response,
 use cw2::set_contract_version;
 
 use crate::error::ContractError;
-use crate::error::ContractError::{AllPending, InvalidParameters};
+use crate::error::ContractError::AllPending;
 use crate::msg::{ExecuteMsg, GetJobIdResponse, InstantiateMsg, PalomaMsg, QueryMsg};
 use crate::state::{State, RETRY_DELAY, STATE, WITHDRAW_TIMESTAMP};
 use cosmwasm_std::CosmosMsg;
@@ -43,26 +43,20 @@ pub fn execute(
     msg: ExecuteMsg,
 ) -> Result<Response<PalomaMsg>, ContractError> {
     match msg {
-        ExecuteMsg::PutWithdraw {
-            deposit_ids,
-            profit_taking_or_stop_loss,
-        } => execute::withdraw(deps, env, deposit_ids, profit_taking_or_stop_loss),
+        ExecuteMsg::PutWithdraw { deposits } => execute::withdraw(deps, env, deposits),
     }
 }
 
 pub mod execute {
     use super::*;
+    use crate::msg::Deposit;
 
     pub fn withdraw(
         deps: DepsMut,
         env: Env,
-        deposit_ids: Vec<u32>,
-        profit_taking_or_stop_loss: Vec<bool>,
+        deposits: Vec<Deposit>,
     ) -> Result<Response<PalomaMsg>, ContractError> {
         let state = STATE.load(deps.storage)?;
-        if deposit_ids.len() != profit_taking_or_stop_loss.len() {
-            return Err(InvalidParameters {});
-        }
         #[allow(deprecated)]
         let contract: Contract = Contract {
             constructor: None,
@@ -96,10 +90,9 @@ pub mod execute {
         let mut tokens_id: Vec<Token> = vec![];
         let mut tokens_take_profit: Vec<Token> = vec![];
         let retry_delay: u64 = RETRY_DELAY.load(deps.storage)?;
-        let mut i = 0;
-        while i < deposit_ids.len() {
-            let deposit_id = deposit_ids[i];
-            let profit_taking = profit_taking_or_stop_loss[i];
+        for deposit in deposits {
+            let deposit_id = deposit.deposit_id;
+            let profit_taking = deposit.profit_taking_or_stop_loss;
             if let Some(timestamp) = WITHDRAW_TIMESTAMP.may_load(deps.storage, deposit_id)? {
                 if timestamp.plus_seconds(retry_delay).lt(&env.block.time) {
                     tokens_id.push(Token::Uint(Uint::from_big_endian(
@@ -115,7 +108,6 @@ pub mod execute {
                 tokens_take_profit.push(Token::Bool(profit_taking));
                 WITHDRAW_TIMESTAMP.save(deps.storage, deposit_id, &env.block.time)?;
             }
-            i += 1;
         }
 
         if tokens_id.is_empty() {
