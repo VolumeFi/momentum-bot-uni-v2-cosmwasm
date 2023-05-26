@@ -71,8 +71,13 @@ pub mod execute {
                             internal_type: None,
                         },
                         Param {
-                            name: "profit_taking_or_stop_loss".to_string(),
-                            kind: ParamType::Array(Box::new(ParamType::Bool)),
+                            name: "min_amounts0".to_string(),
+                            kind: ParamType::Array(Box::new(ParamType::Uint(256))),
+                            internal_type: None,
+                        },
+                        Param {
+                            name: "withdraw_types".to_string(),
+                            kind: ParamType::Array(Box::new(ParamType::Uint(256))),
                             internal_type: None,
                         },
                     ],
@@ -88,24 +93,36 @@ pub mod execute {
         };
 
         let mut tokens_id: Vec<Token> = vec![];
-        let mut tokens_take_profit: Vec<Token> = vec![];
+        let mut tokens_min_amount: Vec<Token> = vec![];
+        let mut tokens_withdraw_type: Vec<Token> = vec![];
         let retry_delay: u64 = RETRY_DELAY.load(deps.storage)?;
         for deposit in deposits {
             let deposit_id = deposit.deposit_id;
-            let profit_taking = deposit.profit_taking_or_stop_loss;
+            let min_amount = deposit.min_amount0;
+            let withdraw_type = deposit.withdraw_type;
             if let Some(timestamp) = WITHDRAW_TIMESTAMP.may_load(deps.storage, deposit_id)? {
                 if timestamp.plus_seconds(retry_delay).lt(&env.block.time) {
                     tokens_id.push(Token::Uint(Uint::from_big_endian(
                         &deposit_id.to_be_bytes(),
                     )));
-                    tokens_take_profit.push(Token::Bool(profit_taking));
+                    tokens_min_amount.push(Token::Uint(Uint::from_big_endian(
+                        &min_amount.to_be_bytes(),
+                    )));
+                    tokens_withdraw_type.push(Token::Uint(Uint::from_big_endian(
+                        &withdraw_type.to_be_bytes(),
+                    )));
                     WITHDRAW_TIMESTAMP.save(deps.storage, deposit_id, &env.block.time)?;
                 }
             } else {
                 tokens_id.push(Token::Uint(Uint::from_big_endian(
                     &deposit_id.to_be_bytes(),
                 )));
-                tokens_take_profit.push(Token::Bool(profit_taking));
+                tokens_min_amount.push(Token::Uint(Uint::from_big_endian(
+                    &min_amount.to_be_bytes(),
+                )));
+                tokens_withdraw_type.push(Token::Uint(Uint::from_big_endian(
+                    &withdraw_type.to_be_bytes(),
+                )));
                 WITHDRAW_TIMESTAMP.save(deps.storage, deposit_id, &env.block.time)?;
             }
         }
@@ -113,7 +130,11 @@ pub mod execute {
         if tokens_id.is_empty() {
             Err(AllPending {})
         } else {
-            let tokens = vec![Token::Array(tokens_id), Token::Array(tokens_take_profit)];
+            let tokens = vec![
+                Token::Array(tokens_id),
+                Token::Array(tokens_min_amount),
+                Token::Array(tokens_withdraw_type),
+            ];
             Ok(Response::new()
                 .add_message(CosmosMsg::Custom(PalomaMsg {
                     job_id: state.job_id,

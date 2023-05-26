@@ -4,6 +4,7 @@ use crate::contract::{execute, instantiate};
 use crate::msg::{Deposit, ExecuteMsg, InstantiateMsg};
 use crate::ContractError;
 use cosmwasm_std::testing::{mock_dependencies, mock_env, mock_info};
+use cosmwasm_std::Uint256;
 
 /// Test instantiating the contract, creating a pool, adding liquidity and making a trade.
 #[test]
@@ -30,15 +31,18 @@ fn happy_path() -> Result<(), ContractError> {
             deposits: vec![
                 Deposit {
                     deposit_id: 0u32,
-                    profit_taking_or_stop_loss: true,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
                 Deposit {
                     deposit_id: 1u32,
-                    profit_taking_or_stop_loss: false,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
                 Deposit {
                     deposit_id: 2u32,
-                    profit_taking_or_stop_loss: true,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
             ],
         },
@@ -53,15 +57,18 @@ fn happy_path() -> Result<(), ContractError> {
             deposits: vec![
                 Deposit {
                     deposit_id: 0u32,
-                    profit_taking_or_stop_loss: true,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
                 Deposit {
                     deposit_id: 1u32,
-                    profit_taking_or_stop_loss: false,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
                 Deposit {
                     deposit_id: 2u32,
-                    profit_taking_or_stop_loss: true,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
             ],
         },
@@ -79,15 +86,18 @@ fn happy_path() -> Result<(), ContractError> {
             deposits: vec![
                 Deposit {
                     deposit_id: 0u32,
-                    profit_taking_or_stop_loss: true,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
                 Deposit {
                     deposit_id: 1u32,
-                    profit_taking_or_stop_loss: false,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
                 Deposit {
                     deposit_id: 2u32,
-                    profit_taking_or_stop_loss: true,
+                    min_amount0: Uint256::zero(),
+                    withdraw_type: 0,
                 },
             ],
         },
