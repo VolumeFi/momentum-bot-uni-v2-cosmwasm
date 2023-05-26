@@ -1,1 +1,1 @@
-00f4a632f055ef00c320943ed1b7dca3a196d11a0103ebd6ba08a6975790d64a  limit_order_bot_univ2_cw.wasm
+5667374c10bd812c1d006972ff9d33d4d8d26757673cc36aea99605b7fa671a1  limit_order_bot_univ2_cw.wasm

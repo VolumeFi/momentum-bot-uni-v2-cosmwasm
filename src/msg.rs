@@ -1,5 +1,5 @@
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{Binary, CustomMsg};
+use cosmwasm_std::{Binary, CustomMsg, Uint256};
 
 #[cw_serde]
 pub struct InstantiateMsg {
@@ -15,7 +15,8 @@ pub enum ExecuteMsg {
 #[cw_serde]
 pub struct Deposit {
     pub deposit_id: u32,
-    pub profit_taking_or_stop_loss: bool,
+    pub min_amount0: Uint256,
+    pub withdraw_type: u8,
 }
 
 /// Message struct for cross-chain calls.
