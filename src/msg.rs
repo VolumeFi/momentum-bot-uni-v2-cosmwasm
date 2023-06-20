@@ -10,6 +10,10 @@ pub struct InstantiateMsg {
 #[cw_serde]
 pub enum ExecuteMsg {
     PutWithdraw { deposits: Vec<Deposit> },
+    SetPaloma {},
+    UpdateCompass { new_compass: String },
+    UpdateRefundWallet { new_refund_wallet: String },
+    UpdateFee { fee: Uint256 },
 }
 
 #[cw_serde]
