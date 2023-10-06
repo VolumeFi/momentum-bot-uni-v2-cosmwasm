@@ -54,6 +54,12 @@ pub fn execute(
             execute::update_refund_wallet(deps, info, new_refund_wallet)
         }
         ExecuteMsg::UpdateFee { fee } => execute::update_fee(deps, info, fee),
+        ExecuteMsg::UpdateServiceFeeCollector {
+            new_service_fee_collector,
+        } => execute::update_service_fee_collector(deps, info, new_service_fee_collector),
+        ExecuteMsg::UpdateServiceFee { new_service_fee } => {
+            execute::update_service_fee(deps, info, new_service_fee)
+        }
     }
 }
 
@@ -342,6 +348,102 @@ pub mod execute {
                 ),
             }))
             .add_attribute("action", "update_fee"))
+    }
+
+    pub fn update_service_fee_collector(
+        deps: DepsMut,
+        info: MessageInfo,
+        new_service_fee_collector: String,
+    ) -> Result<Response<PalomaMsg>, ContractError> {
+        let state = STATE.load(deps.storage)?;
+        if state.owner != info.sender {
+            return Err(Unauthorized {});
+        }
+        let new_service_fee_collector_address: Address =
+            Address::from_str(new_service_fee_collector.as_str()).unwrap();
+        #[allow(deprecated)]
+        let contract: Contract = Contract {
+            constructor: None,
+            functions: BTreeMap::from_iter(vec![(
+                "update_service_fee_collector".to_string(),
+                vec![Function {
+                    name: "update_service_fee_collector".to_string(),
+                    inputs: vec![Param {
+                        name: "new_service_fee_collector".to_string(),
+                        kind: ParamType::Address,
+                        internal_type: None,
+                    }],
+                    outputs: Vec::new(),
+                    constant: None,
+                    state_mutability: StateMutability::NonPayable,
+                }],
+            )]),
+            events: BTreeMap::new(),
+            errors: BTreeMap::new(),
+            receive: false,
+            fallback: false,
+        };
+
+        Ok(Response::new()
+            .add_message(CosmosMsg::Custom(PalomaMsg {
+                job_id: state.job_id,
+                payload: Binary(
+                    contract
+                        .function("update_service_fee_collector")
+                        .unwrap()
+                        .encode_input(&[Token::Address(new_service_fee_collector_address)])
+                        .unwrap(),
+                ),
+            }))
+            .add_attribute("action", "update_service_fee_collector"))
+    }
+
+    pub fn update_service_fee(
+        deps: DepsMut,
+        info: MessageInfo,
+        new_service_fee: Uint256,
+    ) -> Result<Response<PalomaMsg>, ContractError> {
+        let state = STATE.load(deps.storage)?;
+        if state.owner != info.sender {
+            return Err(Unauthorized {});
+        }
+        #[allow(deprecated)]
+        let contract: Contract = Contract {
+            constructor: None,
+            functions: BTreeMap::from_iter(vec![(
+                "update_service_fee".to_string(),
+                vec![Function {
+                    name: "update_service_fee".to_string(),
+                    inputs: vec![Param {
+                        name: "new_service_fee".to_string(),
+                        kind: ParamType::Uint(256),
+                        internal_type: None,
+                    }],
+                    outputs: Vec::new(),
+                    constant: None,
+                    state_mutability: StateMutability::NonPayable,
+                }],
+            )]),
+            events: BTreeMap::new(),
+            errors: BTreeMap::new(),
+            receive: false,
+            fallback: false,
+        };
+
+        Ok(Response::new()
+            .add_message(CosmosMsg::Custom(PalomaMsg {
+                job_id: state.job_id,
+                payload: Binary(
+                    contract
+                        .function("update_service_fee")
+                        .unwrap()
+                        .encode_input(&[Token::Uint(Uint::from_big_endian(
+                            &new_service_fee.to_be_bytes(),
+                        ))])
+                        .unwrap(),
+                ),
+            }))
+            .add_attribute("action", "update_service_fee"))
     }
 }
 

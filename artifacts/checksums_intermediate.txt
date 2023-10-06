@@ -1,1 +1,1 @@
-c991446d47b1d39016ed5b62e3be37610b37a1bb5db7e3e3a70813dff344b834  ./target/wasm32-unknown-unknown/release/limit_order_bot_univ2_cw.wasm
+2f1817f23027bd938a235a036c9efa82a02dffaf957e21e25b1a6e52f5f70e13  /target/wasm32-unknown-unknown/release/limit_order_bot_univ2_cw.wasm
